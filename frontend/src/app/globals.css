@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+@theme {
+  /* Blockchain Colors */
+  --color-background: #050505;
+  --color-foreground: #ffffff;
+  --color-primary: #00f0ff;
+  --color-primary-dark: #00a0a8;
+  --color-accent: #39ff14;
+  --color-neon-purple: #8a2be2;
+
+  /* Courtroom Colors */
+  --color-maroon: #4a0e17;
+  --color-navy: #0a1128;
+  --color-brass: #c5a059;
+  --color-wood: #2c1a12;
+
+  --color-panel: rgba(10, 17, 40, 0.7);
+  --color-panel-border: rgba(197, 160, 89, 0.3);
+
+  /* Fonts */
+  --font-serif: var(--font-cinzel);
+  --font-mono: var(--font-mono);
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--color-background)] text-[var(--color-foreground)] min-h-screen font-sans antialiased overflow-x-hidden;
+
+    /* 
+       THEMED BACKGROUND: 
+       A base of deep wood grain texture overlaid with a glowing blockchain grid 
+    */
+    background:
+      /* Animated Blockchain Grid Overlay */
+      linear-gradient(rgba(138, 43, 226, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(138, 43, 226, 0.05) 1px, transparent 1px),
+      /* Subtle wood paneling texture */
+      linear-gradient(to right, rgba(0, 0, 0, 0.2) 2px, transparent 2px),
+      radial-gradient(circle at 50% 50%, #2c1a12 0%, #0a0e1a 100%);
+    background-size: 50px 50px, 50px 50px, 200px 100%, 100% 100%;
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3,
+  .serif-font {
+    font-family: var(--font-serif);
+  }
+
+  code,
+  pre,
+  .mono-font {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-[var(--color-panel)] backdrop-blur-xl border border-[var(--color-panel-border)] rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)];
+  }
+
+  .neon-text {
+    @apply text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(0,240,255,0.8)];
+  }
+
+  .neon-text-purple {
+    @apply text-[var(--color-neon-purple)] drop-shadow-[0_0_10px_rgba(138,43,226,0.8)];
+  }
+
+  .wax-seal-button {
+    @apply relative px-10 py-4 font-serif text-[var(--color-brass)] bg-[var(--color-maroon)] border-2 border-[var(--color-brass)] rounded-full uppercase tracking-[0.2em] transition-all duration-500 shadow-[0_5px_15px_rgba(0,0,0,0.4)];
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+  }
+
+  .wax-seal-button:hover {
+    @apply scale-105 border-[var(--color-primary)] text-[var(--color-primary)] shadow-[0_0_25px_var(--color-primary)];
+    background-color: #5a111c;
+  }
+
+  .cyber-button {
+    @apply relative px-10 py-4 font-mono text-[var(--color-primary)] bg-transparent border border-[var(--color-primary)] rounded-md uppercase tracking-widest transition-all duration-300;
+  }
+
+  .cyber-button:hover {
+    @apply bg-[var(--color-primary)]/10 shadow-[0_0_20px_var(--color-primary)] scale-105 cursor-pointer;
+  }
+
+  .cyber-button:active {
+    @apply scale-95;
+  }
+
+  .neon-button {
+    @apply relative py-4 px-10 bg-black/40 border-2 border-[var(--color-primary)] text-[var(--color-primary)] font-black uppercase tracking-[0.2em] transition-all duration-300 rounded-xl shadow-[0_0_15px_rgba(0,240,255,0.2)] cursor-pointer;
+  }
+
+  .neon-button:hover:not(:disabled) {
+    @apply bg-[var(--color-primary)] text-black scale-105 shadow-[0_0_30px_var(--color-primary)];
+  }
+
+  .neon-button:active:not(:disabled) {
+    @apply scale-95;
+  }
+
+  .neon-button:disabled {
+    @apply opacity-30 grayscale cursor-not-allowed;
+  }
+
+  .wax-seal-button {
+    @apply cursor-pointer;
+  }
+
+  .pulse-node {
+    animation: pulse-node 3s infinite;
+  }
+}
+
+@keyframes pulse-node {
+
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+    filter: blur(1px);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-maroon);
+  border: 2px solid #050505;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}

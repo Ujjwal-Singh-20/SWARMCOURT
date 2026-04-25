@@ -1,0 +1,543 @@
+{
+    "version": "0.1.0",
+    "name": "swarmcourt",
+    "instructions": [
+        {
+            "name": "initializeGlobal",
+            "accounts": [
+                {
+                    "name": "globalState",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "admin",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": []
+        },
+        {
+            "name": "unregisterAgent",
+            "accounts": [
+                {
+                    "name": "globalState",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "reputation",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "owner",
+                    "isMut": true,
+                    "isSigner": true
+                }
+            ],
+            "args": []
+        },
+        {
+            "name": "registerAgent",
+            "accounts": [
+                {
+                    "name": "globalState",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "reputation",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "agent",
+                    "isMut": false,
+                    "isSigner": false
+                },
+                {
+                    "name": "payer",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": []
+        },
+        {
+            "name": "openCase",
+            "accounts": [
+                {
+                    "name": "globalState",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "case",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "creator",
+                    "isMut": true,
+                    "isSigner": true
+                },
+                {
+                    "name": "adminWallet",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "systemProgram",
+                    "isMut": false,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "caseId",
+                    "type": "u64"
+                },
+                {
+                    "name": "task",
+                    "type": "string"
+                },
+                {
+                    "name": "juryTier",
+                    "type": "u8"
+                },
+                {
+                    "name": "topology",
+                    "type": "u8"
+                },
+                {
+                    "name": "bountyAmount",
+                    "type": "u64"
+                }
+            ]
+        },
+        {
+            "name": "commitTranscript",
+            "accounts": [
+                {
+                    "name": "case",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "creator",
+                    "isMut": false,
+                    "isSigner": true
+                }
+            ],
+            "args": [
+                {
+                    "name": "caseId",
+                    "type": "u64"
+                },
+                {
+                    "name": "ipfsCid",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "submitVote",
+            "accounts": [
+                {
+                    "name": "case",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "agent",
+                    "isMut": false,
+                    "isSigner": true
+                }
+            ],
+            "args": [
+                {
+                    "name": "caseId",
+                    "type": "u64"
+                },
+                {
+                    "name": "choice",
+                    "type": "u8"
+                }
+            ]
+        },
+        {
+            "name": "finalizeCase",
+            "accounts": [
+                {
+                    "name": "case",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "creator",
+                    "isMut": false,
+                    "isSigner": true
+                }
+            ],
+            "args": [
+                {
+                    "name": "caseId",
+                    "type": "u64"
+                }
+            ]
+        },
+        {
+            "name": "penalizeAndRedraft",
+            "accounts": [
+                {
+                    "name": "globalState",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "case",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "reputation",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "caller",
+                    "isMut": true,
+                    "isSigner": true
+                }
+            ],
+            "args": [
+                {
+                    "name": "caseId",
+                    "type": "u64"
+                },
+                {
+                    "name": "penalizedAgent",
+                    "type": "publicKey"
+                }
+            ]
+        },
+        {
+            "name": "submitFeedback",
+            "accounts": [
+                {
+                    "name": "case",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "creator",
+                    "isMut": false,
+                    "isSigner": true
+                }
+            ],
+            "args": [
+                {
+                    "name": "caseId",
+                    "type": "u64"
+                },
+                {
+                    "name": "satisfied",
+                    "type": "bool"
+                },
+                {
+                    "name": "rating",
+                    "type": {
+                        "option": "u8"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "recalculateReputation",
+            "accounts": [
+                {
+                    "name": "case",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "reputation",
+                    "isMut": true,
+                    "isSigner": false
+                },
+                {
+                    "name": "globalState",
+                    "isMut": true,
+                    "isSigner": false
+                }
+            ],
+            "args": [
+                {
+                    "name": "caseId",
+                    "type": "u64"
+                },
+                {
+                    "name": "agentPubkey",
+                    "type": "publicKey"
+                }
+            ]
+        }
+    ],
+    "accounts": [
+        {
+            "name": "GlobalState",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "agents",
+                        "type": {
+                            "vec": "publicKey"
+                        }
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Case",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "caseId",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "creator",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "agents",
+                        "type": {
+                            "vec": "publicKey"
+                        }
+                    },
+                    {
+                        "name": "task",
+                        "type": "string"
+                    },
+                    {
+                        "name": "state",
+                        "type": "u8"
+                    },
+                    {
+                        "name": "topology",
+                        "type": "u8"
+                    },
+                    {
+                        "name": "juryTier",
+                        "type": "u8"
+                    },
+                    {
+                        "name": "generator",
+                        "type": {
+                            "option": "publicKey"
+                        }
+                    },
+                    {
+                        "name": "validators",
+                        "type": {
+                            "vec": "publicKey"
+                        }
+                    },
+                    {
+                        "name": "transcriptCid",
+                        "type": "string"
+                    },
+                    {
+                        "name": "votes",
+                        "type": {
+                            "vec": {
+                                "defined": "CaseVote"
+                            }
+                        }
+                    },
+                    {
+                        "name": "finalChoice",
+                        "type": "u8"
+                    },
+                    {
+                        "name": "weightedScoreWinner",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "weightedScoreLoser",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "hasFinal",
+                        "type": "bool"
+                    },
+                    {
+                        "name": "hasFeedback",
+                        "type": "bool"
+                    },
+                    {
+                        "name": "userSatisfied",
+                        "type": "bool"
+                    },
+                    {
+                        "name": "userRating",
+                        "type": {
+                            "option": "u8"
+                        }
+                    },
+                    {
+                        "name": "createdAt",
+                        "type": "i64"
+                    },
+                    {
+                        "name": "lastUpdate",
+                        "type": "i64"
+                    },
+                    {
+                        "name": "finalizedAt",
+                        "type": "i64"
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    },
+                    {
+                        "name": "bounty",
+                        "type": "u64"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "AgentReputation",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "agent",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "owner",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "score",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "totalCases",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "correctVotes",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "stakeSlashed",
+                        "type": "u64"
+                    },
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "ReputationClaim",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "bump",
+                        "type": "u8"
+                    }
+                ]
+            }
+        }
+    ],
+    "types": [
+        {
+            "name": "CaseVote",
+            "type": {
+                "kind": "struct",
+                "fields": [
+                    {
+                        "name": "agent",
+                        "type": "publicKey"
+                    },
+                    {
+                        "name": "choice",
+                        "type": "u8"
+                    }
+                ]
+            }
+        }
+    ],
+    "errors": [
+        {
+            "code": 6000,
+            "name": "InvalidTier",
+            "msg": "Invalid jury tier"
+        },
+        {
+            "code": 6001,
+            "name": "TaskTooLong",
+            "msg": "Task description too long"
+        },
+        {
+            "code": 6002,
+            "name": "NotEnoughAgents",
+            "msg": "Not enough agents registered"
+        },
+        {
+            "code": 6003,
+            "name": "InvalidState",
+            "msg": "Invalid state"
+        },
+        {
+            "code": 6004,
+            "name": "AgentNotAuthorized",
+            "msg": "Agent not authorized"
+        },
+        {
+            "code": 6005,
+            "name": "FeedbackAlreadySubmitted",
+            "msg": "Feedback already submitted"
+        },
+        {
+            "code": 6006,
+            "name": "MaxAgentsReached",
+            "msg": "Max agents reached"
+        },
+        {
+            "code": 6007,
+            "name": "AlreadyVoted",
+            "msg": "Agent has already voted"
+        },
+        {
+            "code": 6008,
+            "name": "TimeoutNotReached",
+            "msg": "Protocol timeout not reached yet"
+        }
+    ]
+}
