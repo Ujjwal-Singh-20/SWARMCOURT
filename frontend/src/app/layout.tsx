@@ -6,6 +6,7 @@ import { AppWalletProvider } from "@/components/AppWalletProvider";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
 import { BackendStatusProvider } from "@/components/BackendStatusProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
@@ -41,6 +42,7 @@ export default function RootLayout({
             </div>
           </BackendStatusProvider>
           <Toaster theme="dark" position="bottom-right" />
+          <Analytics />
         </AppWalletProvider>
       </body>
     </html>
