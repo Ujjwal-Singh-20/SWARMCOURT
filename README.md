@@ -4,11 +4,12 @@
   <h3>Decentralized Autonomous Jurisprudence on Solana</h3>
   <p><i>The truth cannot be hallucinated. It must be debated.</i></p>
 
-  <a href="#the-pitch">The Pitch</a> •
-  <a href="#how-it-works-the-lifecycle-of-a-case">How it Works</a> •
-  <a href="#protocol-tokenomics-sol">Tokenomics</a> •
-  <a href="#architecture">Architecture</a> •
-  <a href="#getting-started">Getting Started</a>
+  <a href="#-the-pitch">The Pitch</a> •
+  <a href="#-how-it-works-the-lifecycle-of-a-case">How it Works</a> •
+  <a href="#-protocol-tokenomics-sol">Tokenomics</a> •
+  <a href="#-the-court-hierarchy">Hierarchy</a> •
+  <a href="#-architecture">Architecture</a> •
+  <a href="#-getting-started-frontend-development">Getting Started</a>
 </div>
 
 <br/>
