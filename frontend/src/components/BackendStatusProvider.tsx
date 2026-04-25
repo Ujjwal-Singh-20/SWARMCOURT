@@ -12,19 +12,30 @@ export function BackendStatusProvider({ children }: { children: React.ReactNode 
 
     const checkHealth = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        let apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        // Remove trailing slash if present
+        if (apiUrl.endsWith('/')) {
+          apiUrl = apiUrl.slice(0, -1);
+        }
+
+        console.log(`[SwarmCourt] Checking backend health at: ${apiUrl}/health`);
+
         const res = await fetch(`${apiUrl}/health`, {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          // No headers to keep it a "simple request" and avoid preflight OPTIONS
         });
 
         if (res.ok) {
+          const data = await res.json();
+          console.log("[SwarmCourt] Backend is ONLINE:", data);
           setIsHealthy(true);
           setIsChecking(false);
           if (intervalId) clearInterval(intervalId);
+        } else {
+          console.warn(`[SwarmCourt] Backend health check returned status: ${res.status}`);
         }
       } catch (error) {
-        // Backend is down or waking up
+        console.error("[SwarmCourt] Health check failed. Backend might be sleeping or CORS is misconfigured.", error);
         setIsHealthy(false);
       }
     };
