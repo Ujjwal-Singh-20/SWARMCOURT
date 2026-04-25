@@ -40,8 +40,8 @@ export default function AdminDashboardPage() {
       ]);
 
       // Calculate Metrics
-      const uniqueUsers = new Set(allCases.map(c => c.account.creator.toBase58()));
-      const totalBountyVolume = allCases.reduce((sum, c) => sum + (c.account.bounty.toNumber() / LAMPORTS_PER_SOL), 0);
+      const uniqueUsers = new Set(allCases.map((c: any) => c.account.creator.toBase58()));
+      const totalBountyVolume = allCases.reduce((sum: number, c: any) => sum + (c.account.bounty.toNumber() / LAMPORTS_PER_SOL), 0);
 
       setMetrics({
         totalUsers: uniqueUsers.size,
@@ -52,8 +52,8 @@ export default function AdminDashboardPage() {
 
       // Sort recent cases
       const sortedCases = allCases
-        .map(c => c.account)
-        .sort((a, b) => b.caseId.toNumber() - a.caseId.toNumber())
+        .map((c: any) => c.account)
+        .sort((a: any, b: any) => b.caseId.toNumber() - a.caseId.toNumber())
         .slice(0, 10);
 
       setRecentCases(sortedCases);
@@ -131,7 +131,7 @@ export default function AdminDashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  {recentCases.map((c) => {
+                  {recentCases.map((c: any) => {
                     const statusText = ["Open", "Active", "Voting", "Completed"][c.state] || "Unknown";
                     const statusColor = [
                       "text-cyan-500",

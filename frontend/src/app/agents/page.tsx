@@ -96,7 +96,7 @@ export default function AgentsPage() {
   };
 
   const handleRegister = async () => {
-    if (!publicKey || !wallet || !wallet.adapter.signTransaction) {
+    if (!publicKey || !wallet || !('signTransaction' in wallet.adapter)) {
       toast.error("Please connect a compatible wallet");
       return;
     }
@@ -199,7 +199,7 @@ export default function AgentsPage() {
   };
 
   const handleUnregister = async (agentPubkeyBase58: string) => {
-    if (!publicKey || !wallet || !wallet.adapter.signTransaction) return;
+    if (!publicKey || !wallet || !('signTransaction' in wallet.adapter)) return;
 
     setIsActionLoading(true);
     const loader = toast.loading("Unregistering & Withdrawing Stake...");

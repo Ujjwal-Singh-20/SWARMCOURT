@@ -11,7 +11,7 @@ import { BN, AnchorProvider } from "@coral-xyz/anchor";
 
 export default function CaseCreationPage() {
   const router = useRouter();
-  const { publicKey, signTransaction, wallet, connected } = useWallet();
+  const { publicKey, signTransaction, signAllTransactions, wallet, connected } = useWallet();
   const { connection } = useConnection();
   
   const [task, setTask] = useState("");
@@ -22,7 +22,7 @@ export default function CaseCreationPage() {
   const activeTier = JURY_TIERS.find((t) => t.id === tier);
 
   const handleCreateCase = async () => {
-    if (!connected || !publicKey || !wallet || !signTransaction) {
+    if (!connected || !publicKey || !wallet || !signTransaction || !signAllTransactions) {
       toast.error("Please connect your wallet first");
       return;
     }
@@ -38,8 +38,8 @@ export default function CaseCreationPage() {
       // Setup Anchor Provider
       const anchorWallet = {
         publicKey: publicKey,
-        signTransaction: signTransaction.bind(wallet.adapter),
-        signAllTransactions: wallet.adapter.signAllTransactions.bind(wallet.adapter),
+        signTransaction: signTransaction,
+        signAllTransactions: signAllTransactions,
       };
       
       const provider = new AnchorProvider(connection, anchorWallet as any, { commitment: "confirmed" });

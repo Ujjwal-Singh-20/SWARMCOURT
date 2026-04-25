@@ -11,7 +11,7 @@ import { BN, AnchorProvider } from "@coral-xyz/anchor";
 import { getProgram, getCasePDA } from "@/lib/program";
 
 type Message = {
-  type: "status" | "utterance" | "vote" | "vote_status" | "finalized" | "error" | "done";
+  type: "status" | "utterance" | "vote" | "vote_status" | "finalized" | "error" | "done" | "complete";
   content: string;
   agent?: string;
   round?: number;
@@ -33,7 +33,7 @@ export default function WarRoomPage() {
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { publicKey, connected, wallet, signTransaction } = useWallet();
+  const { publicKey, connected, wallet, signTransaction, signAllTransactions } = useWallet();
   const { connection } = useConnection();
   const wsRef = useRef<WebSocket | null>(null);
   const feedEndRef = useRef<HTMLDivElement>(null);
@@ -219,7 +219,7 @@ export default function WarRoomPage() {
 
 
   const handleSubmitFeedback = async (satisfied: boolean, rating: number = 5) => {
-    if (!connected || !publicKey || !wallet || !signTransaction) {
+    if (!connected || !publicKey || !wallet || !signTransaction || !signAllTransactions) {
       toast.error("Please connect your wallet first");
       return;
     }
@@ -228,8 +228,8 @@ export default function WarRoomPage() {
     try {
       const anchorWallet = {
         publicKey: publicKey,
-        signTransaction: signTransaction.bind(wallet.adapter),
-        signAllTransactions: wallet.adapter.signAllTransactions.bind(wallet.adapter),
+        signTransaction: signTransaction,
+        signAllTransactions: signAllTransactions,
       };
       const provider = new AnchorProvider(connection, anchorWallet as any, { commitment: "confirmed" });
       const program = getProgram(provider);
