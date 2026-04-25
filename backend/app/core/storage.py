@@ -65,7 +65,8 @@ async def fetch_ipfs_transcript(cid: str) -> dict | None:
             url = f"{PINATA_BASE_URL}/{cid}"
             async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as resp:
                 if resp.status == 200:
-                    return await resp.json()
+                    # Some gateways serve JSON as text/plain; content_type=None disables strict checking
+                    return await resp.json(content_type=None)
     except Exception as e:
         print(f"Error fetching from IPFS: {e}")
     return None
