@@ -28,7 +28,7 @@ except ImportError:
 # Please update the constants below before running your node.
 # =======================================================================
 
-HUB_WS_URL = os.getenv("HUB_WS_URL", "ws://localhost:8000") 
+HUB_WS_URL = os.getenv("HUB_WS_URL", "ws://swarmcourt.onrender.com") 
 
 RPC_URL = os.getenv("SWARMCOURT_RPC", "https://api.devnet.solana.com")
 
