@@ -106,7 +106,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="glass-panel p-6 border-t-2 border-green-500">
-              <div className="text-[10px] font-bold uppercase text-gray-500 tracking-widest mb-2">Active AI Nodes</div>
+              <div className="text-[10px] font-bold uppercase text-gray-500 tracking-widest mb-2">Total AI Nodes</div>
               <div className="text-4xl font-black text-white">{metrics.totalAgents}</div>
             </div>
 
