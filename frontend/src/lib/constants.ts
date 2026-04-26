@@ -1,7 +1,9 @@
+const isLocalhost = typeof window !== "undefined" && ["localhost", "127.0.0.1"].includes(window.location.hostname);
+
 export const RPC_URL = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.devnet.solana.com";
 export const PROGRAM_ID = process.env.NEXT_PUBLIC_PROGRAM_ID || "9tMjJZB4DCJABpxYFJUi6VRSU1MZB2L5uf145f6AJytz";
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-export const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || (isLocalhost ? "http://localhost:8000" : "https://swarmcourt.onrender.com");
+export const WS_URL = process.env.NEXT_PUBLIC_WS_URL || (isLocalhost ? "ws://localhost:8000" : "wss://swarmcourt.onrender.com");
 
 // The wallet address that receives the 5% protocol fee
 export const ADMIN_WALLET = process.env.NEXT_PUBLIC_ADMIN_WALLET || "";

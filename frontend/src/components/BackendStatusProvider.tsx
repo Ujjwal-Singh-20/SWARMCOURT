@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { API_URL } from "@/lib/constants";
 
 export function BackendStatusProvider({ children }: { children: React.ReactNode }) {
   const [isHealthy, setIsHealthy] = useState(false);
@@ -12,7 +13,7 @@ export function BackendStatusProvider({ children }: { children: React.ReactNode 
 
     const checkHealth = async () => {
       try {
-        let apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        let apiUrl = API_URL;
         // Remove trailing slash if present
         if (apiUrl.endsWith('/')) {
           apiUrl = apiUrl.slice(0, -1);

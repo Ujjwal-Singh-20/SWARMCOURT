@@ -13,7 +13,7 @@ export default function CaseCreationPage() {
   const router = useRouter();
   const { publicKey, signTransaction, signAllTransactions, wallet, connected } = useWallet();
   const { connection } = useConnection();
-  
+
   const [task, setTask] = useState("");
   const [tier, setTier] = useState(1);
   const [topology, setTopology] = useState(0);
@@ -59,7 +59,7 @@ export default function CaseCreationPage() {
         signTransaction: signTransaction,
         signAllTransactions: signAllTransactions,
       };
-      
+
       const provider = new AnchorProvider(connection, anchorWallet as any, { commitment: "confirmed" });
       const program = getProgram(provider);
 
@@ -68,7 +68,7 @@ export default function CaseCreationPage() {
       const adminPubkey = ADMIN_WALLET ? new PublicKey(ADMIN_WALLET) : publicKey;
 
       toast.loading("Step 1: Signing on-chain transaction...", { id: loadingToast });
-      
+
       const ix = await program.methods
         .openCase(new BN(caseId), task, tier, topology, bountyLamports)
         .accounts({
@@ -89,12 +89,12 @@ export default function CaseCreationPage() {
 
       const tx = new VersionedTransaction(messageV0);
       const signedTx = await signTransaction(tx);
-      
+
       let signature = "";
       try {
         toast.loading("Sending transaction to Solana Devnet...", { id: loadingToast });
         signature = await connection.sendRawTransaction(signedTx.serialize());
-        
+
         toast.loading("Waiting for confirmation...", { id: loadingToast });
         await connection.confirmTransaction({
           signature,
@@ -105,9 +105,9 @@ export default function CaseCreationPage() {
         const errStr = txError.message ? txError.message.toLowerCase() : "";
         const errFull = txError.toString().toLowerCase();
         const logsStr = txError.logs ? txError.logs.join(" ").toLowerCase() : "";
-        
+
         if (
-          errStr.includes("already been processed") || 
+          errStr.includes("already been processed") ||
           errStr.includes("0x0") ||
           errFull.includes("already been processed") ||
           logsStr.includes("already been processed") ||
@@ -130,7 +130,7 @@ export default function CaseCreationPage() {
 
       // Step 2: Inform Backend
       toast.loading("Step 2: Syncing with SwarmCourt AI...", { id: loadingToast });
-      
+
       const res = await fetch(`${API_URL}/cases/open-case`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -196,9 +196,8 @@ export default function CaseCreationPage() {
               <button
                 key={t.id}
                 onClick={() => setTopology(t.id)}
-                className={`p-4 rounded border text-left transition-all ${
-                  topology === t.id ? "border-[var(--color-primary)] bg-[var(--color-primary)]/10" : "border-white/5 bg-black/30"
-                }`}
+                className={`p-4 rounded border text-left transition-all ${topology === t.id ? "border-[var(--color-primary)] bg-[var(--color-primary)]/10" : "border-white/5 bg-black/30"
+                  }`}
               >
                 <div className={`font-bold ${topology === t.id ? "text-[var(--color-primary)]" : "text-gray-300"}`}>{t.label}</div>
                 <div className="text-xs text-gray-500 mt-1">{t.description}</div>
@@ -214,9 +213,8 @@ export default function CaseCreationPage() {
               <button
                 key={t.id}
                 onClick={() => setTier(t.id)}
-                className={`p-4 rounded border text-center transition-all ${
-                  tier === t.id ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10" : "border-white/5 bg-black/30"
-                }`}
+                className={`p-4 rounded border text-center transition-all ${tier === t.id ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10" : "border-white/5 bg-black/30"
+                  }`}
               >
                 <div className={`font-bold ${tier === t.id ? "text-[var(--color-accent)]" : "text-gray-300"}`}>{t.label}</div>
                 <div className="text-lg font-mono mt-2 text-white">{t.bounty} SOL</div>
