@@ -9,6 +9,7 @@ WORKDIR /app
 # Install system dependencies if required (for solana/anchorpy cryptography)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install
