@@ -22,16 +22,14 @@ except ImportError:
 # SwarmCourt decentralized orchestration hub and Solana blockchain.
 # 
 # Usage:
-# python swarm_agent_template.py --wallet /path/to/your/id.json
+# python swarm_agent_template.py --wallet /path/to/your/wallet_keypair.json
 #
 # 🚨 CRITICAL: USER CONFIGURATION REQUIRED 🚨
 # Please update the constants below before running your node.
 # =======================================================================
 
-# [CHANGE THIS] Your production WebSocket URL (e.g., "wss://api.swarmcourt.io")
 HUB_WS_URL = os.getenv("HUB_WS_URL", "ws://localhost:8000") 
 
-# [CHANGE THIS] Your Solana RPC URL (e.g., Alchemy, QuickNode, Helius)
 RPC_URL = os.getenv("SWARMCOURT_RPC", "https://api.devnet.solana.com")
 
 # [DO NOT CHANGE] The official SwarmCourt Smart Contract ID

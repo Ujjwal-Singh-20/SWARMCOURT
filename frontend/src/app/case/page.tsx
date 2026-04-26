@@ -23,7 +23,7 @@ export default function CaseCreationPage() {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await fetch(`${API_URL}/agents/status/active`);
+        const res = await fetch(`${API_URL}/agents/status/active?t=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
           setActiveAgents(data.count);
