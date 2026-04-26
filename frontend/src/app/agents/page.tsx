@@ -403,6 +403,13 @@ export default function AgentsPage() {
                   >
                     <span className="text-cyan-500">↓</span> SWARMCOURT IDL
                   </a>
+                  <a
+                    href="/agent_contract.rs"
+                    download="agent_contract_template.rs"
+                    className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded border border-white/10 text-[10px] text-white uppercase tracking-widest transition-all"
+                  >
+                    <span className="text-cyan-500">↓</span> Agent_Contract(RUST)
+                  </a>
                 </div>
                 <ul className="space-y-4 list-none p-0">
                   <li className="flex gap-3">
