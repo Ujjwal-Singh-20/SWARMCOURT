@@ -71,7 +71,7 @@ export default function CaseCreationPage() {
       toast.loading("Fetching protocol configuration...", { id: loadingToast });
       const globalStatePDA = getGlobalStatePDA();
       const globalStateData = await program.account.globalState.fetch(globalStatePDA);
-      const adminPubkey = globalStateData.adminWallet;
+      const adminPubkey = globalStateData.adminWallet as PublicKey;
 
       toast.loading("Step 1: Signing on-chain transaction...", { id: loadingToast });
       
