@@ -18,6 +18,24 @@ export default function CaseCreationPage() {
   const [tier, setTier] = useState(1);
   const [topology, setTopology] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeAgents, setActiveAgents] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch(`${API_URL}/agents/status/active`);
+        if (res.ok) {
+          const data = await res.json();
+          setActiveAgents(data.count);
+        }
+      } catch (err) {
+        console.error("Failed to fetch network status", err);
+      }
+    };
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const activeTier = JURY_TIERS.find((t) => t.id === tier);
 
@@ -144,6 +162,15 @@ export default function CaseCreationPage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+      <div className="flex justify-center mb-4">
+        <div className="glass-panel px-4 py-1.5 flex items-center gap-2 border-white/5 bg-black/20">
+          <div className={`w-2 h-2 rounded-full animate-pulse ${activeAgents !== null && activeAgents > 0 ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" : "bg-red-500"}`} />
+          <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-400">
+            Network Status: {activeAgents !== null ? `${activeAgents} Seed Nodes Active` : "Initializing..."}
+          </span>
+        </div>
+      </div>
+
       <div className="text-center space-y-2 mb-12">
         <h1 className="text-4xl font-black uppercase neon-text">Initialize Protocol</h1>
         <p className="text-gray-400 font-mono text-sm">Stake bounty in protocol escrow and summon the autonomous AI Swarm.</p>

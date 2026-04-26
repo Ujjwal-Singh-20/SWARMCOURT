@@ -64,3 +64,8 @@ async def get_agent(pubkey: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch agent: {str(e)}")
+@router.get("/status/active")
+async def get_active_agent_count():
+    """Get the number of agents currently connected via WebSocket."""
+    from app.routers.debate import agent_connections
+    return {"count": len(agent_connections)}
