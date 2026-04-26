@@ -65,17 +65,23 @@ export default function CaseCreationPage() {
 
       const caseId = Math.floor(Date.now() / 1000);
       const bountyLamports = new BN((activeTier!.bounty * 1_000_000_000).toString());
-      const adminPubkey = ADMIN_WALLET ? new PublicKey(ADMIN_WALLET) : publicKey;
+      
+      // Fetch the actual admin wallet from the on-chain state to satisfy the has_one constraint
+      // This allows ANY user (not just the admin) to successfully initialize the protocol
+      toast.loading("Fetching protocol configuration...", { id: loadingToast });
+      const globalStatePDA = getGlobalStatePDA();
+      const globalStateData = await program.account.globalState.fetch(globalStatePDA);
+      const adminPubkey = globalStateData.adminWallet;
 
       toast.loading("Step 1: Signing on-chain transaction...", { id: loadingToast });
-
+      
       const ix = await program.methods
         .openCase(new BN(caseId), task, tier, topology, bountyLamports)
         .accounts({
           case: getCasePDA(caseId),
           creator: publicKey,
           adminWallet: adminPubkey,
-          globalState: getGlobalStatePDA(),
+          globalState: globalStatePDA,
           systemProgram: SystemProgram.programId,
         })
         .instruction();
