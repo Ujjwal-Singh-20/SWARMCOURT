@@ -154,6 +154,45 @@ export default function WarRoomPage() {
       console.error("Failed to load archive:", err);
     }
   };
+  const commitTranscriptOnChain = async (cid: string) => {
+    if (!publicKey || !signTransaction) throw new Error("Wallet not connected");
+    const anchorWallet = {
+      publicKey,
+      signTransaction,
+      signAllTransactions,
+    };
+    const provider = new AnchorProvider(connection, anchorWallet as any, { commitment: "confirmed" });
+    const program = getProgram(provider);
+    const casePDA = getCasePDA(Number(caseId));
+
+    return await program.methods
+      .commitTranscript(new BN(caseId), cid)
+      .accounts({
+        case: casePDA,
+        creator: publicKey,
+      })
+      .rpc();
+  };
+
+  const finalizeCaseOnChain = async () => {
+    if (!publicKey || !signTransaction) throw new Error("Wallet not connected");
+    const anchorWallet = {
+      publicKey,
+      signTransaction,
+      signAllTransactions,
+    };
+    const provider = new AnchorProvider(connection, anchorWallet as any, { commitment: "confirmed" });
+    const program = getProgram(provider);
+    const casePDA = getCasePDA(Number(caseId));
+
+    return await program.methods
+      .finalizeCase(new BN(caseId))
+      .accounts({
+        case: casePDA,
+        creator: publicKey,
+      })
+      .rpc();
+  };
 
   const startWebSocket = () => {
     const ws = new WebSocket(`${WS_URL}/debate/${caseId}`);
@@ -168,13 +207,37 @@ export default function WarRoomPage() {
       }));
     };
 
-    ws.onmessage = (event) => {
+    ws.onmessage = async (event) => {
       try {
-        const msg: Message = JSON.parse(event.data);
+        const msg: any = JSON.parse(event.data);
         setMessages((prev) => [...prev, msg]);
 
         if (msg.type === "utterance") {
           setCurrentSpeaker(msg.agent || null);
+        } else if (msg.type === "request_onchain_commit") {
+          // HUB is asking US to commit the transcript because it can't sign for us
+          toast.info("Debate complete. Preparing on-chain transcript commit...");
+          try {
+            const signature = await commitTranscriptOnChain(msg.data.cid);
+            toast.success("Transcript committed on-chain!");
+            ws.send(JSON.stringify({ type: "onchain_commit_success", data: { tx: signature } }));
+          } catch (err) {
+            console.error("Failed to commit transcript:", err);
+            toast.error("Failed to commit transcript on-chain.");
+            ws.send(JSON.stringify({ type: "onchain_commit_error" }));
+          }
+        } else if (msg.type === "request_onchain_finalize") {
+          // HUB is asking US to finalize because votes are in
+          toast.info("Jury votes confirmed! Finalizing case...");
+          try {
+            const signature = await finalizeCaseOnChain();
+            toast.success("Case finalized on-chain!");
+            ws.send(JSON.stringify({ type: "onchain_finalize_success", data: { tx: signature } }));
+          } catch (err) {
+            console.error("Failed to finalize case:", err);
+            toast.error("Failed to finalize case on-chain.");
+            ws.send(JSON.stringify({ type: "onchain_finalize_error" }));
+          }
         } else if (msg.type === "finalized") {
           setFinalResult(msg.data);
           if (msg.data.final_output) {
@@ -190,10 +253,6 @@ export default function WarRoomPage() {
 
         if (msg.type === "done" || msg.type === "complete" || msg.type === "error") {
           setIsDone(true);
-          if (msg.type === "complete") {
-            // Refresh to show Finalize button
-            setTimeout(initPage, 2000);
-          }
         }
       } catch (e) {
         console.error("WS Message Error:", e);

@@ -166,13 +166,20 @@ async def debate_websocket(websocket: WebSocket, case_id: int):
             "data": {"cid": ipfs_cid, "is_ipfs": is_real},
         })
 
-        # 5. Commit transcript hash on-chain
-        await websocket.send_json({"type": "status", "content": "Committing transcript to Solana..."})
-        tx = await client.commit_transcript_onchain(case_id, ipfs_cid)
+        # 5. Ask Frontend to commit transcript hash on-chain (Hub cannot sign for non-admin creators)
         await websocket.send_json({
-            "type": "status",
-            "content": f"Transcript committed on-chain. Tx: {str(tx)[:32]}...",
+            "type": "request_onchain_commit",
+            "content": "Debate complete! Please sign to commit transcript on-chain.",
+            "data": {"cid": ipfs_cid}
         })
+        
+        # Wait for frontend to confirm commit
+        try:
+            conf = await asyncio.wait_for(websocket.receive_json(), timeout=60)
+            if conf.get("type") != "onchain_commit_success":
+                raise Exception("Frontend failed to commit transcript")
+        except asyncio.TimeoutError:
+            raise Exception("Timed out waiting for frontend on-chain commit")
 
         # 6. Wait for autonomous agent votes
         expected_votes = len(agents) if topology == 0 else len(agents) - 1
@@ -187,10 +194,6 @@ async def debate_websocket(websocket: WebSocket, case_id: int):
             case_check = await client.get_case_data(case_id)
             if case_check:
                 votes_found = len(case_check.votes)
-                
-                # If we have less votes than expected, we wait for the agents to submit them.
-                # The Hub cannot submit votes on behalf of the agents because it lacks their private keys.
-
                 await websocket.send_json({
                     "type": "vote_status",
                     "content": f"Votes: {votes_found}/{expected_votes}",
@@ -200,15 +203,21 @@ async def debate_websocket(websocket: WebSocket, case_id: int):
                     break
             await asyncio.sleep(5)
 
-        if votes_found < expected_votes:
-            await websocket.send_json({
-                "type": "status",
-                "content": f"Timeout: {votes_found}/{expected_votes} votes. Proceeding anyway.",
-            })
+        # 7. Ask Frontend to finalize case on-chain
+        await websocket.send_json({
+            "type": "request_onchain_finalize",
+            "content": "Votes are in! Please sign to finalize the case.",
+            "data": {"winner": winner[0] if 'winner' in locals() else 0}
+        })
 
-        # 7. Finalize case on-chain
-        await websocket.send_json({"type": "status", "content": "Finalizing case on-chain..."})
-        tx = await client.finalize_case_onchain(case_id)
+        # Wait for frontend to confirm finalization
+        try:
+            conf = await asyncio.wait_for(websocket.receive_json(), timeout=60)
+            if conf.get("type") != "onchain_finalize_success":
+                raise Exception("Frontend failed to finalize case")
+            tx = conf.get("data", {}).get("tx", "Success")
+        except asyncio.TimeoutError:
+            raise Exception("Timed out waiting for frontend on-chain finalize")
 
         if "FAILED" in str(tx) or "ERROR" in str(tx):
             await websocket.send_json({
