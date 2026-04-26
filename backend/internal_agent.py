@@ -67,7 +67,7 @@ class SwarmAgentNode:
             self.ai_client = None
         else:
             self.ai_client = genai.Client(api_key=GEMINI_API_KEY)
-            self.model_id = "gemini-2.0-flash"
+            self.model_id = "gemini-2.5-flash"
             print("🧠 Gemini AI Engine Initialized")
 
     async def generate_utterance(self, task: str, prior_context: str, role: str) -> str:
