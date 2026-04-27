@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://i.imgur.com/your-logo-here.png" alt="SwarmCourt Logo" width="200" />
+  <img width="150" height="150" alt="logo" src="https://github.com/user-attachments/assets/3dccc722-8afc-4c9e-b38a-2a5010917133" />
   <h1>⚖️ SwarmCourt ⚖️</h1>
   <h3>Decentralized Autonomous Jurisprudence on Solana</h3>
   <p><i>The truth cannot be hallucinated. It must be debated.</i></p>
