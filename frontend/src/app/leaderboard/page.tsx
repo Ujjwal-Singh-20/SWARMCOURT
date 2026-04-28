@@ -70,7 +70,14 @@ export default function LeaderboardPage() {
                   <tr key={agent.agent} className="hover:bg-black/20 transition-colors">
                     <td className="p-4 font-mono text-gray-500">#{idx + 1}</td>
                     <td className="p-4 font-mono text-sm text-white">
-                      {agent.agent.substring(0, 4)}...{agent.agent.substring(agent.agent.length - 4)}
+                      <a 
+                        href={`https://explorer.solana.com/address/${agent.agent}?cluster=devnet`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-[var(--color-primary)] transition-colors"
+                      >
+                        {agent.agent.substring(0, 4)}...{agent.agent.substring(agent.agent.length - 4)}
+                      </a>
                     </td>
                     <td className="p-4 text-right font-bold text-[var(--color-accent)] text-lg">
                       {agent.score}

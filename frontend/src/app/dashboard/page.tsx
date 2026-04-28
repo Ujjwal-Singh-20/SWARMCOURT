@@ -52,9 +52,8 @@ export default function AdminDashboardPage() {
 
       // Sort recent cases
       const sortedCases = allCases
-        .map((c: any) => c.account)
-        .sort((a: any, b: any) => b.caseId.toNumber() - a.caseId.toNumber())
-        .slice(0, 10);
+        .sort((a: any, b: any) => b.account.caseId.toNumber() - a.account.caseId.toNumber())
+        .slice(0, 20);
 
       setRecentCases(sortedCases);
     } catch (err) {
@@ -106,7 +105,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="glass-panel p-6 border-t-2 border-green-500">
-              <div className="text-[10px] font-bold uppercase text-gray-500 tracking-widest mb-2">Total AI Nodes</div>
+              <div className="text-[10px] font-bold uppercase text-gray-500 tracking-widest mb-2">Active AI Nodes</div>
               <div className="text-4xl font-black text-white">{metrics.totalAgents}</div>
             </div>
 
@@ -132,28 +131,44 @@ export default function AdminDashboardPage() {
                 </thead>
                 <tbody className="text-sm">
                   {recentCases.map((c: any) => {
-                    const statusText = ["Open", "Active", "Voting", "Completed"][c.state] || "Unknown";
+                    const statusText = ["Open", "Active", "Voting", "Completed"][c.account.state] || "Unknown";
                     const statusColor = [
                       "text-cyan-500",
                       "text-yellow-500",
                       "text-purple-500",
                       "text-green-500"
-                    ][c.state] || "text-gray-500";
+                    ][c.account.state] || "text-gray-500";
 
                     return (
-                      <tr key={c.caseId.toString()} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                        <td className="py-4 font-mono">#{c.caseId.toString()}</td>
+                      <tr key={c.account.caseId.toString()} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                        <td className="py-4 font-mono">
+                          <a 
+                            href={`https://explorer.solana.com/address/${c.publicKey.toBase58()}?cluster=devnet`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-[var(--color-primary)] transition-colors underline decoration-dotted"
+                          >
+                            #{c.account.caseId.toString()}
+                          </a>
+                        </td>
                         <td className="py-4 font-mono text-gray-400">
-                          {c.creator.toBase58().substring(0, 4)}...{c.creator.toBase58().slice(-4)}
+                          <a 
+                            href={`https://explorer.solana.com/address/${c.account.creator.toBase58()}?cluster=devnet`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-[var(--color-primary)] transition-colors"
+                          >
+                            {c.account.creator.toBase58().substring(0, 4)}...{c.account.creator.toBase58().slice(-4)}
+                          </a>
                         </td>
                         <td className={`py-4 font-black uppercase text-[10px] tracking-widest ${statusColor}`}>
                           {statusText}
                         </td>
                         <td className="py-4 text-[var(--color-accent)] font-mono">
-                          {(c.bounty.toNumber() / LAMPORTS_PER_SOL).toFixed(2)} SOL
+                          {(c.account.bounty.toNumber() / LAMPORTS_PER_SOL).toFixed(2)} SOL
                         </td>
                         <td className="py-4 text-gray-500 font-mono text-xs">
-                          {c.task.length} chars
+                          {c.account.task.length} chars
                         </td>
                       </tr>
                     );
@@ -170,7 +185,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <p className="text-[9px] text-gray-600 mt-6 text-center font-mono uppercase">
-              * Showing only the last 10 cases drafted.
+              * Showing only the last 20 cases drafted.
             </p>
           </div>
         </>

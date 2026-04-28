@@ -15,6 +15,7 @@ export default function Navbar() {
   const navItems = [
     { name: "Archive", href: "/history" },
     { name: "Agents", href: "/agents" },
+    { name: "Leaderboard", href: "/leaderboard" },
     { name: "Lawroom", href: "/case" },
     { name: "Traction", href: "/dashboard" },
   ];

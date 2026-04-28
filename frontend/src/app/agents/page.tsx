@@ -168,7 +168,7 @@ export default function AgentsPage() {
       }
 
       // 4. Register the Agent
-      await program.methods
+      const signature = await program.methods
         .registerAgent()
         .accounts({
           globalState: globalPDA,
@@ -179,7 +179,20 @@ export default function AgentsPage() {
         })
         .rpc();
 
-      toast.success("Agent Registered Successfully!", { id: loader });
+      toast.success(
+        <div className="flex flex-col gap-1">
+          <span>Agent Registered Successfully!</span>
+          <a 
+            href={`https://explorer.solana.com/tx/${signature}?cluster=devnet`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-[var(--color-primary)] underline decoration-dotted"
+          >
+            View on Explorer
+          </a>
+        </div>,
+        { id: loader }
+      );
       setShowGuide(false);
       fetchAgents();
     } catch (err: any) {

@@ -219,7 +219,19 @@ export default function WarRoomPage() {
           toast.info("Debate complete. Preparing on-chain transcript commit...");
           try {
             const signature = await commitTranscriptOnChain(msg.data.cid);
-            toast.success("Transcript committed on-chain!");
+            toast.success(
+              <div className="flex flex-col gap-1">
+                <span>Transcript committed on-chain!</span>
+                <a 
+                  href={`https://explorer.solana.com/tx/${signature}?cluster=devnet`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-[var(--color-primary)] underline decoration-dotted"
+                >
+                  View on Explorer
+                </a>
+              </div>
+            );
             ws.send(JSON.stringify({ type: "onchain_commit_success", data: { tx: signature } }));
           } catch (err) {
             console.error("Failed to commit transcript:", err);
@@ -231,7 +243,19 @@ export default function WarRoomPage() {
           toast.info("Jury votes confirmed! Finalizing case...");
           try {
             const signature = await finalizeCaseOnChain();
-            toast.success("Case finalized on-chain!");
+            toast.success(
+              <div className="flex flex-col gap-1">
+                <span>Case finalized on-chain!</span>
+                <a 
+                  href={`https://explorer.solana.com/tx/${signature}?cluster=devnet`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-[var(--color-primary)] underline decoration-dotted"
+                >
+                  View on Explorer
+                </a>
+              </div>
+            );
             ws.send(JSON.stringify({ type: "onchain_finalize_success", data: { tx: signature } }));
           } catch (err) {
             console.error("Failed to finalize case:", err);
@@ -405,6 +429,14 @@ export default function WarRoomPage() {
             <span className="text-lg group-hover:-translate-x-1 inline-block transition-transform">←</span>
           </Link>
           <h1 className="text-3xl font-black neon-text uppercase tracking-tighter">Case #{caseId}</h1>
+          <a 
+            href={`https://explorer.solana.com/address/${getCasePDA(Number(caseId)).toBase58()}?cluster=devnet`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] font-mono text-[var(--color-primary)] hover:underline opacity-60 hover:opacity-100 uppercase tracking-widest mt-1"
+          >
+            Explorer ↗
+          </a>
           <div className={`px-3 py-1 rounded text-[10px] font-black tracking-widest uppercase ${!isDone ? "bg-[var(--color-primary)] text-black animate-pulse" :
             finalResult?.hasFeedback ? "bg-white/10 text-gray-400" : "bg-amber-500 text-black shadow-[0_0_15px_rgba(245,158,11,0.3)]"
             }`}>

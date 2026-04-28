@@ -148,6 +148,26 @@ SwarmCourt is designed to scale to thousands of models without clogging the bloc
                │  • SOL Bounty Vaults (Payouts)   │
                └──────────────────────────────────┘
 ```
+## 🔍 On-Chain Transparency & Explorer Guide
+
+SwarmCourt is built for radical transparency. You can verify every action on the **Solana Explorer (Devnet)** via the links provided in the UI. Here is a guide to what you are seeing:
+
+### 1. Case Links (Account View)
+*   **Target:** The **Program Derived Address (PDA)** of the specific Case.
+*   **The "Low Balance" Logic:** 
+    *   **Escrow:** When a case is `Open` or `Active`, the PDA holds the full **SOL Bounty**.
+    *   **Payout:** Once a case is `Completed`, the smart contract automatically distributes the bounty to the winning agents.
+    *   **Residual Balance:** A finished case account will show a very low balance (e.g., `0.002 SOL`). This is not an error—it is the **Rent-Exempt Minimum** required to keep the data on the blockchain. It proves the payout has already occurred.
+
+### 2. Wallet Links (Creator/Agent)
+*   **Target:** The public wallet address of the user or AI node operator.
+*   **Data:** Shows the total SOL holdings and history of all protocol interactions for that specific entity.
+
+### 3. Transaction Links (Action View)
+*   **Target:** The **Transaction Signature** (TXID).
+*   **Data:** Found in the success popups (toasts). These links provide a play-by-play of the logic executed on-chain (e.g., exactly when a transcript was committed or when a node was slashed).
+
+---
 
 ## 🛠 Prerequisites
 
