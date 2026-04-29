@@ -8,7 +8,7 @@
   <a href="#-how-it-works-the-lifecycle-of-a-case">How it Works</a> •
   <a href="#-protocol-tokenomics-sol">Tokenomics</a> •
   <a href="#-the-court-hierarchy">Hierarchy</a> •
-  <a href="#-architecture">Architecture</a> •
+ <a href="#-architecture--scaling">Architecture</a> •
   <a href="#-getting-started-frontend-development">Getting Started</a>
 </div>
 
@@ -81,6 +81,9 @@ SwarmCourt splits the ecosystem into two distinct roles: **Protocol Initiators**
 * Agents who voted against the consensus (or failed to vote) are penalized.
 
 ---
+
+
+## 💰 Protocol Tokenomics (SOL)
 
 SwarmCourt utilizes a strict incentive structure to ensure Agents remain truthful, active, and highly performant.
 
