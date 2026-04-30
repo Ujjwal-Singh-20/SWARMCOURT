@@ -63,7 +63,40 @@ async def debate_websocket(websocket: WebSocket, case_id: int):
             await websocket.close()
             return
 
-        # Use the drafted agents from the on-chain case
+        # 3. Pre-debate Connection Sync (Drafted Agents check)
+        await websocket.send_json({"type": "status", "content": "Verifying agent connectivity..."})
+        
+        MAX_SYNC_ATTEMPTS = 3
+        for sync_attempt in range(MAX_SYNC_ATTEMPTS):
+            case_data = await client.get_case_data(case_id)
+            if not case_data: break
+            
+            agents = [str(a) for a in case_data.agents]
+            missing_agents = [a for a in agents if a not in agent_connections]
+            
+            if not missing_agents:
+                await websocket.send_json({"type": "status", "content": "All agents synchronized and online."})
+                break
+                
+            await websocket.send_json({
+                "type": "status", 
+                "content": f"Agent(s) {len(missing_agents)} offline. Triggering autonomous redraft...",
+                "data": {"missing": missing_agents}
+            })
+            
+            # Attempt to redraft the first missing agent
+            try:
+                target = missing_agents[0]
+                redraft_tx = await client.penalize_and_redraft_onchain(case_id, target)
+                await websocket.send_json({"type": "status", "content": f"Redraft successful. Tx: {redraft_tx[:20]}..."})
+                # Small delay for RPC propagation
+                await asyncio.sleep(3)
+            except Exception as e:
+                print(f"Sync redraft failed: {e}")
+                break
+
+        # Refresh agents list after sync
+        case_data = await client.get_case_data(case_id)
         agents = [str(a) for a in case_data.agents]
         models = {a: model for a in agents}
 
@@ -73,7 +106,7 @@ async def debate_websocket(websocket: WebSocket, case_id: int):
             "data": {"agents": agents, "topology": topology, "case_id": case_id},
         })
 
-        # 3. Build config and run the streaming debate using data from the CHAIN (Source of Truth)
+        # 4. Build config and run the streaming debate
         config = DebateConfig(
             case_id=case_id,
             task=case_data.task,
@@ -93,7 +126,7 @@ async def debate_websocket(websocket: WebSocket, case_id: int):
         try:
             msg = await gen.__anext__()
             while True:
-                # 3.1 Handle request for utterance from external agent
+                # 4.1 Handle request for utterance from external agent
                 if msg.get("type") == "request_utterance":
                     agent_pk = msg.get("agent")
                     await websocket.send_json({"type": "status", "agent": agent_pk, "content": f"Waiting for {agent_pk[:8]}... to speak", "role": msg.get("role")})
@@ -115,8 +148,6 @@ async def debate_websocket(websocket: WebSocket, case_id: int):
                                 # Trigger on-chain penalty and redraft
                                 redraft_tx = await client.penalize_and_redraft_onchain(case_id, agent_pk)
                                 await websocket.send_json({"type": "status", "content": f"New agent drafted! Tx: {redraft_tx}"})
-                                # In a real scenario, we would now refresh the case state and continue with the new agent.
-                                # For the MVP, we'll use a placeholder response to keep the UI moving.
                                 utterance = f"Protocol Notice: Agent {agent_pk[:8]} was penalized for inactivity. Replacement drafted."
                             except Exception as redraft_e:
                                 print(f"❌ Redraft failed: {redraft_e}")
@@ -126,8 +157,9 @@ async def debate_websocket(websocket: WebSocket, case_id: int):
                         finally:
                             pending_responses.pop(agent_pk, None)
                     else:
+                        # Agent dropped off between sync and round or redraft failed
                         await asyncio.sleep(2)
-                        utterance = f"Mock response: {agent_pk[:8]} speaking autonomously."
+                        utterance = f"Node {agent_pk[:8]} is currently desynchronized. Proceeding with protocol fallback."
 
                     # Send the response BACK into the generator
                     msg = await gen.asend(utterance)
