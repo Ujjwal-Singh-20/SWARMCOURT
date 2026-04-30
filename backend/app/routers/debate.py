@@ -66,7 +66,7 @@ async def debate_websocket(websocket: WebSocket, case_id: int):
         # 3. Pre-debate Connection Sync (Drafted Agents check)
         await websocket.send_json({"type": "status", "content": "Verifying agent connectivity..."})
         
-        MAX_SYNC_ATTEMPTS = 3
+        MAX_SYNC_ATTEMPTS = 5
         for sync_attempt in range(MAX_SYNC_ATTEMPTS):
             case_data = await client.get_case_data(case_id)
             if not case_data: break
@@ -80,7 +80,7 @@ async def debate_websocket(websocket: WebSocket, case_id: int):
                 
             await websocket.send_json({
                 "type": "status", 
-                "content": f"Agent(s) {len(missing_agents)} offline. Triggering autonomous redraft...",
+                "content": f"Sync Attempt {sync_attempt + 1}: Agent(s) {len(missing_agents)} offline. Triggering autonomous redraft...",
                 "data": {"missing": missing_agents}
             })
             
@@ -88,16 +88,30 @@ async def debate_websocket(websocket: WebSocket, case_id: int):
             try:
                 target = missing_agents[0]
                 redraft_tx = await client.penalize_and_redraft_onchain(case_id, target)
-                await websocket.send_json({"type": "status", "content": f"Redraft successful. Tx: {redraft_tx[:20]}..."})
-                # Small delay for RPC propagation
-                await asyncio.sleep(3)
+                if "FAILED" in str(redraft_tx):
+                     print(f"❌ Redraft instruction failed: {redraft_tx}")
+                     # Wait a bit and try again (maybe same agent was drafted)
+                     await asyncio.sleep(5)
+                else:
+                    await websocket.send_json({"type": "status", "content": f"Redraft successful. Tx: {str(redraft_tx)[:16]}..."})
+                    # Delay for RPC propagation and state update
+                    await asyncio.sleep(6)
             except Exception as e:
-                print(f"Sync redraft failed: {e}")
-                break
+                print(f"Sync redraft exception: {e}")
+                await asyncio.sleep(2)
 
         # Refresh agents list after sync
         case_data = await client.get_case_data(case_id)
         agents = [str(a) for a in case_data.agents]
+        
+        # FINAL CHECK: If still missing agents, check if ANY are connected
+        if any(a not in agent_connections for a in agents):
+            if not agent_connections:
+                await websocket.send_json({"type": "error", "content": "CRITICAL: No AI agents are currently connected to the Hub. Please launch your agent nodes."})
+                await websocket.close()
+                return
+            await websocket.send_json({"type": "status", "content": "Warning: Some agents remain offline after redrafting. Protocol will use fallbacks."})
+
         models = {a: model for a in agents}
 
         await websocket.send_json({

@@ -1,4 +1,5 @@
 """
+SwarmCourt Client — Ported from OLD/client/swarmcourt/client.py for FastAPI backend.
 Handles: debate orchestration, on-chain Solana interaction, IPFS storage.
 """
 
@@ -335,7 +336,8 @@ class SwarmCourtClient:
         """Trigger on-chain penalty and redrafting for an unresponsive agent."""
         return await self._call_instruction(
             "penalize_and_redraft",
-            [case_id, penalized_agent_pubkey]
+            [case_id, Pubkey.from_string(penalized_agent_pubkey)],
+            agent_context=penalized_agent_pubkey
         )
 
     async def finalize_case_onchain(self, case_id: int) -> str:
@@ -399,15 +401,18 @@ class SwarmCourtClient:
                 agent_pubkey = Pubkey.from_string(str(agent_str)) if agent_str else self._wallet.public_key
                 add_acc("agent", agent_pubkey)
 
-        if name in ["recalculateReputation", "recalculate_reputation"]:
+        if name in ["recalculateReputation", "recalculate_reputation", "penalizeAndRedraft", "penalize_and_redraft"]:
             case_id = args.get("case_id") or args.get("caseId")
-            agent_arg = args.get("agent_pubkey") or args.get("agent")
+            agent_arg = args.get("agent_pubkey") or args.get("agent") or args.get("penalized_agent") or args.get("penalizedAgent")
             case_pda, _ = Pubkey.find_program_address([b"case", case_id.to_bytes(8, "little")], self._program.program_id)
             agent_pubkey = Pubkey.from_string(str(agent_arg)) if agent_arg else self._wallet.public_key
             reputation, _ = Pubkey.find_program_address([b"reputation", bytes(agent_pubkey)], self._program.program_id)
             add_acc("case", case_pda)
             add_acc("reputation", reputation)
             add_acc("globalState", global_state)
+            if "penalize" in name.lower():
+                add_acc("caller", self._wallet.public_key)
+                add_acc("penalizedAgent", agent_pubkey)
 
         # In decentralized mode, signers must be provided by external agent nodes
         signers = []
