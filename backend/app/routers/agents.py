@@ -69,3 +69,9 @@ async def get_active_agent_count():
     """Get the number of agents currently connected via WebSocket."""
     from app.routers.debate import agent_connections
     return {"count": len(agent_connections)}
+
+@router.get("/active")
+async def get_active_agents():
+    """Get the list of agent public keys currently connected via WebSocket."""
+    from app.routers.debate import agent_connections
+    return {"active_agents": list(agent_connections.keys())}

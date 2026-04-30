@@ -49,6 +49,12 @@ export default function CaseCreationPage() {
       return;
     }
 
+    if (activeAgents !== null && activeAgents < activeTier!.agents) {
+      toast.error(`Network Capacity Error: Need ${activeTier!.agents} active nodes for ${activeTier!.label}, but only ${activeAgents} are online.`);
+      setIsSubmitting(false);
+      return;
+    }
+
     setIsSubmitting(true);
     const loadingToast = toast.loading("Initiating Case Creation...");
 

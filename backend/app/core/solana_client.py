@@ -412,7 +412,7 @@ class SwarmCourtClient:
             add_acc("globalState", global_state)
             if "penalize" in name.lower():
                 add_acc("caller", self._wallet.public_key)
-                add_acc("penalizedAgent", agent_pubkey)
+                # penalized_agent is an ARG, not an ACCOUNT.
 
         # In decentralized mode, signers must be provided by external agent nodes
         signers = []
