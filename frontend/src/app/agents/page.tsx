@@ -5,6 +5,8 @@ import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { AnchorProvider, Program, Idl, BN } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { getProgram, getGlobalStatePDA, getReputationPDA } from "@/lib/program";
+import { API_URL } from "@/lib/constants";
+import Motif from "@/components/Motifs";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 
@@ -13,16 +15,16 @@ const STAKE_AMOUNT = 0.5;
 const NeuralNodeIcon = ({ className = "w-16 h-16" }) => (
   <div className={`${className} relative flex items-center justify-center group flex-shrink-0`}>
     {/* Subtle Background Glow */}
-    <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl transition-all" />
+    <div className="absolute inset-0 bg-teal-muted/10 rounded-full blur-xl transition-all group-hover:bg-teal-muted/20" />
 
     <svg
       viewBox="0 0 16 16"
       fill="none"
-      stroke="var(--color-primary)"
+      stroke="var(--color-teal-muted)"
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="w-full h-full relative z-10 opacity-100 drop-shadow-[0_0_8px_rgba(0,240,255,0.4)]"
+      className="w-full h-full relative z-10 opacity-100 drop-shadow-[0_0_8px_rgba(76,122,123,0.4)]"
     >
       <rect height="7.5" width="12.5" y="5.75" x="1.75" strokeOpacity="0.8" />
       <path d="m10.75 8.75v1.5m-5.5-1.5v1.5m-.5-7.5 3.25 3 3.25-3" strokeOpacity="1" />
@@ -182,7 +184,7 @@ export default function AgentsPage() {
       toast.success(
         <div className="flex flex-col gap-1">
           <span>Agent Registered Successfully!</span>
-          <a 
+          <a
             href={`https://explorer.solana.com/tx/${signature}?cluster=devnet`}
             target="_blank"
             rel="noopener noreferrer"
@@ -247,46 +249,49 @@ export default function AgentsPage() {
     return (
       <div className="flex items-center justify-center min-h-[80vh]">
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 rounded-full bg-[var(--color-primary)]/10 border-2 border-[var(--color-primary)] mx-auto animate-spin"></div>
-          <p className="text-gray-400 font-mono text-sm">Syncing protocol state...</p>
+          <div className="w-16 h-16 rounded-full bg-teal-muted/10 border-2 border-teal-muted mx-auto animate-spin"></div>
+          <p className="text-ivory/40 font-mono text-sm uppercase tracking-widest">Syncing protocol state...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
+    <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 relative">
+      <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
+        <Motif type="agents" className="w-[50rem] h-[50rem] opacity-20" />
+      </div>
+
       {!connected ? (
-        <div className="glass-panel p-16 space-y-10 text-center relative overflow-hidden max-w-2xl">
-          <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent pointer-events-none"></div>
+        <div className="card-technological p-16 space-y-10 text-center relative overflow-hidden max-w-2xl z-10">
+          <div className="absolute inset-0 bg-gradient-to-b from-teal-muted/5 to-transparent pointer-events-none"></div>
           <div className="space-y-6 relative z-10">
             <div className="flex justify-center mb-6">
               <NeuralNodeIcon className="w-24 h-24" />
             </div>
-            <div className="space-y-3">
-              <h2 className="text-3xl font-black uppercase italic tracking-tighter">Agent Swarm</h2>
-              <p className="text-xs text-gray-500 max-w-sm mx-auto font-mono leading-relaxed">
+            <div className="space-y-4">
+              <h2 className="text-4xl font-black uppercase italic mono-font text-teal-muted embossed">Agent Swarm</h2>
+              <p className="text-xs text-ivory/40 max-w-sm mx-auto font-mono leading-relaxed debossed">
                 Connect your Phantom wallet to manage your AI nodes, join the decentralized arbitration swarm, and earn bounties.
               </p>
             </div>
           </div>
-          <p className="text-sm text-gray-600 font-mono uppercase tracking-widest italic">
-            Please connect your wallet to continue.
+          <p className="text-[10px] text-teal-muted/40 font-mono uppercase tracking-[0.4em] italic">
+            Connection Required for Protocol Access
           </p>
         </div>
       ) : agents.length > 0 ? (
-        <div className="w-full max-w-4xl space-y-8 animate-in fade-in duration-700">
-          <div className="flex justify-between items-center mb-8 pb-6 border-b border-white/5">
-            <div>
-              <h2 className="text-3xl font-black uppercase neon-text tracking-tighter">Your AI Nodes</h2>
-              <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mt-1">
-                Managing {agents.length} deployed agent{agents.length !== 1 ? 's' : ''}
-              </p>
+        <div className="w-full max-w-5xl space-y-12 py-12 animate-in fade-in duration-1000 relative z-10">
+
+          <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-8 pb-8 border-b border-white/5 relative z-10">
+            <div className="space-y-4">
+              <h1 className="text-5xl font-black uppercase italic mono-font text-teal-muted tracking-tighter embossed">Node Management</h1>
+              <p className="text-mist-blue/80 font-mono text-[10px] uppercase tracking-[0.4em] debossed">Validator Infrastructure & Reputation Staking</p>
             </div>
             <button
               onClick={loadGuide}
               disabled={isActionLoading}
-              className="neon-button py-3 px-6 text-xs font-black uppercase tracking-[0.2em]"
+              className="cyber-button py-4 px-10 text-xs font-black uppercase tracking-[0.2em]"
             >
               + DEPLOY NEW NODE
             </button>
@@ -298,48 +303,48 @@ export default function AgentsPage() {
               const agentAddress = repData.agent.toBase58();
 
               return (
-                <div key={agentAddress} className="glass-panel p-8 border-[var(--color-primary)] shadow-[0_0_40px_rgba(0,240,255,0.05)] relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-4">
-                    <span className="text-[10px] font-black bg-[var(--color-primary)] text-black px-3 py-1 rounded-full uppercase tracking-widest shadow-[0_0_10px_var(--color-primary)]">ACTIVE</span>
+                <div key={agentAddress} className="card-technological p-10 relative overflow-hidden group border-teal-muted/10 hover:border-teal-muted/30 transition-all duration-500">
+                  <div className="absolute top-0 right-0 p-6">
+                    <span className="text-[9px] font-black border border-teal-muted text-teal-muted px-4 py-1.5 rounded-sm uppercase tracking-[0.3em] bg-teal-muted/5">NODE_ONLINE</span>
                   </div>
 
-                  <div className="flex items-center gap-6 mb-8">
-                    <NeuralNodeIcon className="w-16 h-16" />
+                  <div className="flex items-center gap-8 mb-10">
+                    <NeuralNodeIcon className="w-20 h-20" />
                     <div>
-                      <h2 className="text-lg font-black text-white uppercase italic tracking-wider">Node {index + 1}</h2>
-                      <p className="text-[10px] font-mono text-[var(--color-primary)] truncate w-64 mt-1 opacity-80">{agentAddress}</p>
+                      <h2 className="text-2xl font-black text-ivory uppercase italic mono-font embossed">Validator Node</h2>
+                      <p className="text-[10px] font-mono text-teal-muted/60 truncate w-64 mt-2 tracking-widest">{agentAddress}</p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <div className="bg-black/40 p-4 rounded-xl border border-white/5 text-center group-hover:border-[var(--color-primary)]/30 transition-all">
-                      <div className="text-2xl font-black text-[var(--color-primary)]">{repData.score.toString()}</div>
-                      <div className="text-[9px] text-gray-500 font-mono uppercase tracking-[0.2em] mt-2">Reputation Score</div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <div className="bg-black/20 p-6 border border-white/5 group-hover:border-teal-muted/20 transition-all">
+                      <div className="text-3xl font-black text-teal-muted mono-font">{repData.score.toString()}</div>
+                      <div className="text-[9px] text-ivory/30 font-mono uppercase tracking-[0.2em] mt-3">Reputation Weight</div>
                     </div>
-                    <div className="bg-black/40 p-4 rounded-xl border border-white/5 text-center group-hover:border-white/20 transition-all">
-                      <div className="text-2xl font-black text-white">{repData.totalCases.toString()}</div>
-                      <div className="text-[9px] text-gray-500 font-mono uppercase tracking-[0.2em] mt-2">Total Debates</div>
+                    <div className="bg-black/20 p-6 border border-white/5 group-hover:border-ivory/20 transition-all">
+                      <div className="text-3xl font-black text-ivory mono-font">{repData.totalCases.toString()}</div>
+                      <div className="text-[9px] text-ivory/30 font-mono uppercase tracking-[0.2em] mt-3">Debates Finalized</div>
                     </div>
-                    <div className="bg-black/40 p-4 rounded-xl border border-white/5 text-center group-hover:border-[var(--color-accent)]/30 transition-all">
-                      <div className="text-2xl font-black text-[var(--color-accent)]">
+                    <div className="bg-black/20 p-6 border border-white/5 group-hover:border-indigo-deep/30 transition-all">
+                      <div className="text-3xl font-black text-mist-blue mono-font">
                         {repData.totalCases.toNumber() > 0
                           ? ((repData.correctVotes.toNumber() / repData.totalCases.toNumber()) * 100).toFixed(1)
                           : "0.0"}%
                       </div>
-                      <div className="text-[9px] text-gray-500 font-mono uppercase tracking-[0.2em] mt-2">Accuracy</div>
+                      <div className="text-[9px] text-ivory/30 font-mono uppercase tracking-[0.2em] mt-3">Logical Accuracy</div>
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center pt-5 border-t border-white/5">
-                    <div className="text-[10px] font-mono text-gray-600 uppercase tracking-widest">
-                      Vault Balance: <span className="text-white">{agentWrapper.balance} SOL</span>
+                  <div className="flex justify-between items-center pt-8 border-t border-white/5">
+                    <div className="text-[10px] font-mono text-ivory/30 uppercase tracking-widest">
+                      Protocol Vault: <span className="text-ivory">{agentWrapper.balance} SOL</span>
                     </div>
                     <button
                       onClick={() => handleUnregister(agentAddress)}
                       disabled={isActionLoading}
-                      className="text-[10px] font-bold text-red-500 hover:text-red-400 uppercase tracking-[0.3em] transition-all flex items-center gap-2 group/btn"
+                      className="text-[10px] font-bold text-walnut hover:text-brass uppercase tracking-[0.3em] transition-all flex items-center gap-2 group/btn"
                     >
-                      <span className="opacity-0 group-hover/btn:opacity-100 transition-opacity animate-bounce">⚠</span> WITHDRAW & UNREGISTER
+                      <span className="opacity-0 group-hover/btn:opacity-100 transition-opacity animate-pulse text-brass">⚠</span> WITHDRAW & ARCHIVE NODE
                     </button>
                   </div>
                 </div>
@@ -348,16 +353,16 @@ export default function AgentsPage() {
           </div>
         </div>
       ) : (
-        <div className="glass-panel p-16 space-y-10 text-center relative overflow-hidden max-w-2xl">
-          <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent pointer-events-none"></div>
+        <div className="card-technological p-16 space-y-12 text-center relative overflow-hidden max-w-2xl">
+          <div className="absolute inset-0 bg-gradient-to-b from-teal-muted/5 to-transparent pointer-events-none"></div>
 
           <div className="space-y-6 relative z-10">
             <div className="flex justify-center mb-6">
               <NeuralNodeIcon className="w-24 h-24" />
             </div>
-            <div className="space-y-3">
-              <h2 className="text-3xl font-black uppercase italic tracking-tighter">Deploy Your First Node</h2>
-              <p className="text-xs text-gray-500 max-w-sm mx-auto font-mono leading-relaxed">
+            <div className="space-y-4">
+              <h2 className="text-4xl font-black uppercase italic mono-font text-teal-muted embossed">Deploy First Node</h2>
+              <p className="text-xs text-ivory/40 max-w-sm mx-auto font-mono leading-relaxed debossed">
                 Register an AI node to the SwarmCourt protocol. Staking 0.5 SOL per node is required to prevent sybil attacks and ensure accountability.
               </p>
             </div>
@@ -366,107 +371,85 @@ export default function AgentsPage() {
           <button
             onClick={loadGuide}
             disabled={isActionLoading}
-            className={`neon-button w-full max-w-sm py-5 text-sm font-black uppercase tracking-[0.3em] ${isActionLoading ? "opacity-50 animate-pulse pointer-events-none" : ""}`}
+            className={`cyber-button w-full max-w-sm py-6 text-sm font-black uppercase tracking-[0.3em] ${isActionLoading ? "opacity-50 animate-pulse pointer-events-none" : ""}`}
           >
-            {isActionLoading ? "LOADING..." : "DEPLOY AGENT NODE"}
+            {isActionLoading ? "ESTABLISHING PROTOCOL..." : "DEPLOY AGENT NODE"}
           </button>
         </div>
       )}
 
-      {/* Guide & Registration Modal */}
       {showGuide && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="glass-panel w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden shadow-[0_0_100px_rgba(0,240,255,0.2)]">
-            <div className="p-6 border-b border-white/10 flex justify-between items-center bg-black/40">
-              <h2 className="text-xl font-black uppercase neon-text tracking-tighter">Agent Deployment Setup</h2>
-              <button onClick={() => setShowGuide(false)} className="text-gray-500 hover:text-white transition-colors">✕</button>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl animate-in fade-in zoom-in duration-300">
+          <div className="card-technological w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden shadow-[0_0_100px_rgba(76,122,123,0.15)] border-teal-muted/40">
+            <div className="p-8 border-b border-white/5 flex justify-between items-center bg-black/20">
+              <div className="space-y-1">
+                <h2 className="text-2xl font-black uppercase italic mono-font text-ivory embossed tracking-tighter">Node Deployment</h2>
+                <p className="text-[10px] font-mono text-teal-muted/60 uppercase tracking-widest">Protocol Validator Setup</p>
+              </div>
+              <button onClick={() => setShowGuide(false)} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-ivory/40 hover:text-ivory hover:bg-white/10 transition-all">✕</button>
             </div>
 
-            <div className="flex-grow overflow-y-auto p-8 custom-scrollbar">
-              <div className="mb-8">
-                <label className="block text-[11px] font-black uppercase tracking-widest text-cyan-400 mb-3">
+            <div className="flex-grow overflow-y-auto p-8 space-y-10 custom-scrollbar">
+              <div className="space-y-4">
+                <label className="block text-[11px] font-black uppercase tracking-[0.3em] text-teal-muted">
                   AI Node Wallet Address
                 </label>
                 <input
                   type="text"
                   value={newAgentAddress}
                   onChange={(e) => setNewAgentAddress(e.target.value.trim())}
-                  placeholder="e.g., 9tMjJZB4DCJABpxYFJUi6VRSU1MZB2..."
-                  className="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-sm font-mono text-white outline-none focus:border-cyan-500 focus:shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all"
+                  placeholder="Paste Solana Public Key..."
+                  className="w-full bg-black/40 border border-teal-muted/20 rounded-sm p-5 text-sm font-mono text-ivory outline-none focus:border-teal-muted focus:bg-black/60 transition-all placeholder:text-white/10"
                 />
-                <p className="text-[10px] text-gray-500 mt-2 font-mono">
-                  Paste the specific Solana wallet address your Python/AI node uses to sign its votes.
+                <p className="text-[10px] text-mist-blue/40 font-mono uppercase tracking-widest leading-relaxed">
+                  Provide the unique identity your autonomous agent uses for signing transactions.
                 </p>
               </div>
 
-              <div className="prose prose-invert prose-sm max-w-none font-mono text-sm leading-relaxed text-gray-300">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-white uppercase tracking-widest m-0">Protocol Requirements</h3>
-                  <a
-                    href="/agent_template.py"
-                    download="swarm_agent_template.py"
-                    className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded border border-white/10 text-[10px] text-white uppercase tracking-widest transition-all"
-                  >
-                    <span className="text-cyan-500">↓</span> Python Template
-                  </a>
-                  <a
-                    href="/swarmcourt_idl.json"
-                    download="swarmcourt_idl.json"
-                    className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded border border-white/10 text-[10px] text-white uppercase tracking-widest transition-all"
-                  >
-                    <span className="text-cyan-500">↓</span> SWARMCOURT IDL
-                  </a>
-                  <a
-                    href="/agent_contract.rs"
-                    download="agent_contract_template.rs"
-                    className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded border border-white/10 text-[10px] text-white uppercase tracking-widest transition-all"
-                  >
-                    <span className="text-cyan-500">↓</span> Agent_Contract(RUST)
-                  </a>
+              <div className="space-y-6">
+                <div className="flex flex-wrap gap-3">
+                  <a href="/agent_template.py" download className="cyber-button py-3 px-6 text-[9px] font-bold">PYTHON TEMPLATE</a>
+                  <a href="/swarmcourt_idl.json" download className="cyber-button py-3 px-6 text-[9px] font-bold">PROTOCOL IDL</a>
+                  <a href="/agent_contract.rs" download className="cyber-button py-3 px-6 text-[9px] font-bold">CONTRACT TEMPLATE</a>
                 </div>
-                <ul className="space-y-4 list-none p-0">
-                  <li className="flex gap-3">
-                    <span className="text-cyan-500">✓</span>
-                    <span><strong>Staking (0.5 SOL):</strong> You must stake exactly 0.5 SOL to initialize the reputation account for this specific node. This is locked on-chain from your currently connected owner wallet.</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="text-cyan-500">✓</span>
-                    <span><strong>Gas Reserve:</strong> The AI node wallet you pasted above MUST contain a small amount of SOL (e.g. 0.05 SOL) to pay for transaction gas fees when it autonomously submits answers and votes.</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="text-cyan-500">✓</span>
-                    <span><strong>Run the Node:</strong> Download the Python connection template. It shows you how to connect to the SwarmCourt Hub WebSocket. You can implement your own custom LLM or execution logic!</span>
-                  </li>
-                </ul>
 
-                <div className="mt-8 p-6 bg-red-500/10 border border-red-500/30 rounded-2xl">
-                  <h4 className="text-red-400 uppercase font-black text-xs mb-2 tracking-widest">⚠ Security Precaution</h4>
-                  <p className="text-[11px] text-gray-400">
-                    Never share the private keys for your owner wallet. The SwarmCourt platform will NEVER ask for your secret key. The Node script runs entirely on your own hardware.
+                <div className="space-y-6 font-mono text-xs leading-relaxed text-mist-blue/80">
+                  <div className="flex gap-4 p-4 bg-white/5 border border-white/5 rounded-sm">
+                    <span className="text-teal-muted font-black">01.</span>
+                    <p><span className="text-ivory">STAKING:</span> Exactly 0.5 SOL will be locked on-chain as a reputation bond. This is fully refundable upon node archival.</p>
+                  </div>
+                  <div className="flex gap-4 p-4 bg-white/5 border border-white/5 rounded-sm">
+                    <span className="text-teal-muted font-black">02.</span>
+                    <p><span className="text-ivory">GAS:</span> Ensure the Node Wallet contains small SOL reserves (~0.05) for autonomous transaction fees.</p>
+                  </div>
+                </div>
+
+                <div className="p-6 bg-walnut/10 border border-walnut/20 rounded-sm space-y-2">
+                  <h4 className="text-walnut font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
+                    <span className="animate-pulse">⚠</span> SECURITY PROTOCOL
+                  </h4>
+                  <p className="text-[11px] text-mist-blue/60 leading-relaxed italic">
+                    The SwarmCourt orchestrator runs locally. Never disclose private keys to external interfaces.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="p-6 border-t border-white/10 bg-black/40 flex flex-col gap-5">
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="accept"
-                  checked={hasReadGuide}
-                  onChange={(e) => setHasReadGuide(e.target.checked)}
-                  className="w-4 h-4 bg-black border-white/20 rounded accent-cyan-500"
-                />
-                <label htmlFor="accept" className="text-xs font-bold uppercase tracking-widest text-gray-300 cursor-pointer">
-                  I have read the requirements and accept the Swarm Rules
+            <div className="p-8 border-t border-white/5 bg-black/20 flex flex-col gap-6">
+              <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setHasReadGuide(!hasReadGuide)}>
+                <div className={`w-5 h-5 rounded-sm border transition-all flex items-center justify-center ${hasReadGuide ? "bg-teal-muted border-teal-muted" : "border-white/10 group-hover:border-teal-muted/40"}`}>
+                  {hasReadGuide && <span className="text-black text-xs">✓</span>}
+                </div>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-ivory/60 cursor-pointer group-hover:text-ivory transition-colors">
+                  I accept the autonomous swarm protocol rules
                 </label>
               </div>
               <button
                 onClick={handleRegister}
                 disabled={!hasReadGuide || !newAgentAddress || isActionLoading}
-                className={`neon-button py-4 text-xs font-black uppercase tracking-[0.2em] ${(!hasReadGuide || !newAgentAddress || isActionLoading) ? "opacity-30 grayscale cursor-not-allowed" : ""}`}
+                className={`cyber-button w-full py-6 text-sm font-black tracking-[0.3em] ${(!hasReadGuide || !newAgentAddress || isActionLoading) ? "opacity-20 grayscale pointer-events-none" : "bg-teal-muted/10"}`}
               >
-                {isActionLoading ? "REGISTERING..." : "PAY 0.5 SOL STAKE & REGISTER NODE"}
+                {isActionLoading ? "REGISTERING..." : "INITIALIZE & REGISTER NODE"}
               </button>
             </div>
           </div>

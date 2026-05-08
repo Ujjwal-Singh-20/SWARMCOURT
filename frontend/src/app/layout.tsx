@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
 import { BackendStatusProvider } from "@/components/BackendStatusProvider";
 import { Analytics } from "@vercel/analytics/next";
+import GlobalBackground from "@/components/GlobalBackground";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
@@ -34,12 +35,11 @@ export default function RootLayout({
       <body className={`${inter.variable} ${jetbrainsMono.variable} ${cinzel.variable} font-sans overflow-x-hidden`}>
         <AppWalletProvider>
           <BackendStatusProvider>
-            <div className="flex flex-col min-h-screen">
-              <Navbar />
-              <main className="flex-grow p-4 md:p-6 pt-6 md:pt-8 max-w-7xl mx-auto w-full overflow-x-hidden">
-                {children}
-              </main>
-            </div>
+            <GlobalBackground />
+            <Navbar />
+            <main className="relative z-10 flex-grow p-4 md:p-6 pt-6 md:pt-8 max-w-7xl mx-auto w-full overflow-x-hidden">
+              {children}
+            </main>
           </BackendStatusProvider>
           <Toaster theme="dark" position="bottom-right" />
           <Analytics />

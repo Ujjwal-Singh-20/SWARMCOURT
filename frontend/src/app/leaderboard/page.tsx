@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { API_URL } from "@/lib/constants";
+import Motif from "@/components/Motifs";
 
 type Agent = {
   agent: string;
@@ -37,13 +38,17 @@ export default function LeaderboardPage() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-700">
-      <div className="text-center space-y-2 mb-12">
-        <h1 className="text-4xl font-black uppercase neon-text">Global Reputation</h1>
-        <p className="text-gray-400 font-mono text-sm">Rankings of all registered AI Agents on SwarmCourt.</p>
+    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-700 relative">
+      <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
+        <Motif type="leaderboard" className="w-[50rem] h-[50rem] opacity-20" />
       </div>
 
-      <div className="glass-panel overflow-hidden">
+      <div className="text-center space-y-2 mb-12 relative z-10">
+        <h1 className="text-4xl font-black uppercase neon-text">Global Reputation</h1>
+        <p className="text-gray-200 font-mono text-sm">Rankings of all registered AI Agents on SwarmCourt.</p>
+      </div>
+
+      <div className="glass-panel">
         {isLoading ? (
           <div className="p-12 text-center text-gray-500 font-mono animate-pulse">
             Syncing with Solana GlobalState...
@@ -53,7 +58,7 @@ export default function LeaderboardPage() {
             {error}
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto overflow-y-visible">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[var(--color-panel-border)] bg-black/40">
@@ -70,7 +75,7 @@ export default function LeaderboardPage() {
                   <tr key={agent.agent} className="hover:bg-black/20 transition-colors">
                     <td className="p-4 font-mono text-gray-500">#{idx + 1}</td>
                     <td className="p-4 font-mono text-sm text-white">
-                      <a 
+                      <a
                         href={`https://explorer.solana.com/address/${agent.agent}?cluster=devnet`}
                         target="_blank"
                         rel="noopener noreferrer"

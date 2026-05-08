@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import { getProgram } from "@/lib/program";
+import Motif from "@/components/Motifs";
 import { ADMIN_WALLET } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
@@ -80,10 +81,14 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
-      <div className="text-center space-y-2 mb-12">
-        <h1 className="text-4xl font-black uppercase neon-text">Protocol Telemetry</h1>
-        <p className="text-gray-400 font-mono text-sm">Decentralized Network Status</p>
+    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700 relative">
+      <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
+        <Motif type="traction" className="w-[45rem] h-[45rem] opacity-20" />
+      </div>
+
+      <div className="text-center space-y-4 mb-16 relative z-10">
+        <h1 className="text-5xl font-black uppercase italic serif-font text-ivory embossed tracking-tighter">Network Traction</h1>
+        <p className="text-brass font-serif italic text-sm uppercase tracking-[0.4em] debossed">Live Protocol Metrics & On-Chain Finality</p>
       </div>
 
       {isLoading ? (
@@ -142,7 +147,7 @@ export default function AdminDashboardPage() {
                     return (
                       <tr key={c.account.caseId.toString()} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                         <td className="py-4 font-mono">
-                          <a 
+                          <a
                             href={`https://explorer.solana.com/address/${c.publicKey.toBase58()}?cluster=devnet`}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -152,7 +157,7 @@ export default function AdminDashboardPage() {
                           </a>
                         </td>
                         <td className="py-4 font-mono text-gray-400">
-                          <a 
+                          <a
                             href={`https://explorer.solana.com/address/${c.account.creator.toBase58()}?cluster=devnet`}
                             target="_blank"
                             rel="noopener noreferrer"
